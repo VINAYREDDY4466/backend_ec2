@@ -11,7 +11,7 @@ async function start() {
   const httpServer = http.createServer(app);
   setupSocketIO(httpServer);
 
-  httpServer.listen(config.PORT, () => {
+  httpServer.listen(config.PORT,'0.0.0.0', () => {
     logger.info(`Server running on ${config.API_URL}`);
     logger.info(`Environment: ${config.NODE_ENV}`);
   });
