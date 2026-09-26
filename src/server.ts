@@ -12,7 +12,7 @@ async function start() {
   setupSocketIO(httpServer);
 
   httpServer.listen(config.PORT,'0.0.0.0', () => {
-    logger.info(`Server running on ${config.API_URL}`);
+    logger.info(`Server running on ${config.PORT}`);
     logger.info(`Environment: ${config.NODE_ENV}`);
   });
 }
