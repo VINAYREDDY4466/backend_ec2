@@ -24,5 +24,5 @@ router.post('/login', authLimiter, validateBody(loginSchema), authController.log
 router.post('/refresh', validateBody(refreshSchema), authController.refresh);
 router.get('/me', authMiddleware, authController.getMe);
 router.patch('/me', authMiddleware, validateBody(updateProfileSchema), authController.updateMe);
-
+router.get('/test', authController.test);
 export default router;
