@@ -16,6 +16,7 @@ async function start() {
     logger.info(`Environment: ${config.NODE_ENV}`);
     logger.info(`API URL: ${config.API_URL}`);
     console.log(`Server running on ${config.PORT}`);
+    console.log(`Environment: ${config.NODE_ENV}`);
   });
 }
 
