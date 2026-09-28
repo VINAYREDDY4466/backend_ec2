@@ -14,6 +14,7 @@ async function start() {
   httpServer.listen(config.PORT,'0.0.0.0', () => {
     logger.info(`Server running on ${config.PORT}`);
     logger.info(`Environment: ${config.NODE_ENV}`);
+    logger.info(`API URL: ${config.API_URL}`);
   });
 }
 
