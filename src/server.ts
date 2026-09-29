@@ -19,7 +19,12 @@ async function start() {
     console.log(`Environment: ${config.NODE_ENV}`);
   });
 }
-
+//add a comment to the start function
+//this function starts the server and connects to the database
+//it also sets up the socket.io server
+//it also logs the server running on the port and the environment
+//it also logs the API URL
+//it also logs the server running on the port and the environment
 start().catch((err) => {
   logger.error(`Failed to start server: ${err.message}`);
   process.exit(1);
