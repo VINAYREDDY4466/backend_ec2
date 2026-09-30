@@ -43,5 +43,5 @@ export const healthCheck = asyncHandler(async (_req: Request, res: Response) => 
   });
 });
 export const test = asyncHandler(async (_req: Request, res: Response) => {
-  sendSuccess(res, { message: 'Hello World vinay reddy dodlapati with ecs 1k2' });
+  sendSuccess(res, { message: 'Hello World vinay reddy dodlapati with ecs version1.0' });
 });
