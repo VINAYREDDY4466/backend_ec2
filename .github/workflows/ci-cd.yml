@@ -59,41 +59,37 @@ jobs:
             ${{ env.IMAGE }}:${{ github.sha }}
 
   deploy:
-    name: Deploy to EC2
+    name: Deploy to ECS
     needs: docker
     runs-on: ubuntu-latest
     concurrency: production
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      AWS_REGION: us-east-1
+      ECS_CLUSTER: backend-cluster
+      ECS_SERVICE: backend-task-service
 
     steps:
-      - name: SSH into EC2 and run the new image
-        uses: appleboy/ssh-action@v1.2.5
+      - name: Log in to AWS
+        uses: aws-actions/configure-aws-credentials@v6
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            set -e
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
 
-            docker pull ${{ env.IMAGE }}:${{ github.sha }}
+      - name: Start a new deployment with the latest image
+        run: |
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service "$ECS_SERVICE" \
+            --force-new-deployment \
+            > /dev/null
 
-            docker rm -f backend || true
-            docker run -d --name backend \
-              --init \
-              --restart unless-stopped \
-              --env-file ~/backend_ec2/.env \
-              -e PORT=4000 \
-              -p 4000:4000 \
-              ${{ env.IMAGE }}:${{ github.sha }}
-
-            for i in $(seq 1 15); do
-              if curl -fsS http://127.0.0.1:4000/api/auth/health > /dev/null; then
-                echo "App is healthy"
-                docker image prune -af
-                exit 0
-              fi
-              sleep 2
-            done
-
-            echo "App did not become healthy. Last logs:"
-            docker logs --tail 30 backend
-            exit 1
+      - name: Wait until the new task is running
+        run: |
+          aws ecs wait services-stable \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE"
+          echo "Deployment finished"
